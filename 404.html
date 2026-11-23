@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#71bad5">
+  <title>404 – Lost in space</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-1%20-2.5%2013%2013'%3E%3Cpath fill='%236fc6e8' d='M2,0h1v1h-1zM8,0h1v1h-1zM3,1h1v1h-1zM7,1h1v1h-1zM2,2h7v1h-7zM1,3h2v1h-2zM4,3h3v1h-3zM8,3h2v1h-2zM0,4h11v1h-11zM0,5h1v1h-1zM2,5h7v1h-7zM10,5h1v1h-1zM0,6h1v1h-1zM2,6h1v1h-1zM8,6h1v1h-1zM10,6h1v1h-1zM3,7h2v1h-2zM6,7h2v1h-2z'/%3E%3C/svg%3E">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body { height: 100%; margin: 0; }
+
+    body {
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      min-height: 100svh;
+      overflow-x: hidden;
+      background: #71bad5;
+      color: #0b2f40;
+      font-family: "Open Sans", "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .page {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(14px, 3vh, 28px);
+      padding: 24px 12px;
+    }
+
+    /* Black console, arcade-cabinet style */
+    .device {
+      --pad: clamp(10px, 2.4vmin, 26px);
+      width: min(92vw, 1040px, calc((100vh - 120px) * 1.6));
+      width: min(92vw, 1040px, calc((100svh - 120px) * 1.6));
+      aspect-ratio: 16 / 10;
+      padding: var(--pad);
+      background: #000;
+      border-radius: calc(var(--pad) * 1.1);
+      box-shadow:
+        0 32px 60px -24px rgba(6, 44, 66, 0.6),
+        0 12px 24px -12px rgba(6, 44, 66, 0.4);
+    }
+
+    .device.shake { animation: shake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+
+    @keyframes shake {
+      10%, 90% { transform: translate(-1px, 0); }
+      20%, 80% { transform: translate(2px, 1px); }
+      30%, 50%, 70% { transform: translate(-4px, -1px); }
+      40%, 60% { transform: translate(4px, 1px); }
+    }
+
+    .screen {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      border: 2px solid #f2f6f8;
+      border-radius: 6px;
+      container-type: size;
+      cursor: pointer;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .screen[data-mode="playing"] { cursor: crosshair; }
+
+    .content { position: absolute; inset: 0; }
+
+    .code {
+      position: absolute;
+      top: 15%;
+      left: 50%;
+      width: min(44cqw, 72cqh);
+      margin: 0;
+      line-height: 0;
+      transform: translateX(-50%);
+    }
+
+    .code svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      fill: #5e5b62;
+      filter: drop-shadow(0 0 0.8cqw rgba(160, 156, 170, 0.75));
+      animation: flicker 5s infinite;
+    }
+
+    @keyframes flicker {
+      0%, 90%, 92%, 95%, 100% { opacity: 1; }
+      91% { opacity: 0.72; }
+      94% { opacity: 0.86; }
+    }
+
+    .message {
+      position: absolute;
+      top: 45%;
+      left: 0;
+      right: 0;
+      margin: 0;
+      color: #5c5a60;
+      font-size: clamp(13px, 2.6cqw, 28px);
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .btn {
+      position: absolute;
+      top: 55%;
+      left: 50%;
+      padding: 0.42em 0.75em;
+      border-radius: 0.35em;
+      background: #fff;
+      color: #000;
+      font-size: clamp(11px, 1.5cqw, 17px);
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+      transform: translateX(-50%);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .btn:hover { box-shadow: 0 0 0 3px rgba(111, 198, 232, 0.7); transform: translateX(-50%) scale(1.05); }
+    .btn:focus-visible { outline: 2px solid #6fc6e8; outline-offset: 3px; }
+
+    @container (max-aspect-ratio: 1/1) {
+      .code { top: 17%; width: 64cqw; }
+      .message { top: 38%; font-size: clamp(13px, 4.8cqw, 24px); }
+      .btn { top: 46%; font-size: clamp(11px, 3.6cqw, 18px); }
+    }
+
+    canvas {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .help {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px 18px;
+      max-width: 92vw;
+      color: rgba(6, 40, 56, 0.78);
+      font-size: 14px;
+      text-align: center;
+    }
+
+    html:not(.js) .help { display: none; }
+
+    .hint { margin: 0; line-height: 1.9; }
+
+    kbd {
+      display: inline-block;
+      min-width: 1.9em;
+      padding: 0.1em 0.45em;
+      border-radius: 4px;
+      border-bottom: 2px solid rgba(6, 40, 56, 0.25);
+      background: rgba(255, 255, 255, 0.6);
+      color: #0b2f40;
+      font: 700 12px/1.4 ui-monospace, Consolas, monospace;
+      text-align: center;
+    }
+
+    .sound {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 13px;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.82);
+      color: #fff;
+      font: 700 12px/1 inherit;
+      cursor: pointer;
+    }
+
+    .sound:hover { background: #000; }
+    .sound:focus-visible { outline: 2px solid #000; outline-offset: 3px; }
+    .sound svg { width: 16px; height: 16px; fill: currentColor; }
+    .sound[aria-pressed="true"] .off,
+    .sound[aria-pressed="false"] .on { display: none; }
+
+    .touch-only { display: none; }
+
+    @media (pointer: coarse) {
+      .touch-only { display: block; }
+      .no-touch { display: none; }
+    }
+
+    @media (max-aspect-ratio: 4/5) {
+      .device {
+        aspect-ratio: 3 / 4;
+        width: min(92vw, 560px, calc((100vh - 150px) * 0.75));
+        width: min(92vw, 560px, calc((100svh - 150px) * 0.75));
+      }
+    }
+
+    @media (max-height: 460px) {
+      .page { padding: 12px; }
+      .help { display: none; }
+      .device {
+        width: min(92vw, calc((100vh - 24px) * 1.6));
+        width: min(92vw, calc((100svh - 24px) * 1.6));
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .code svg, .device.shake { animation: none; }
+      .btn { transition: none; }
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="device">
+      <div class="screen" id="screen" data-mode="attract">
+        <div class="content">
+          <h1 class="code">
+            <span class="sr-only">Error 404</span>
+            <svg viewBox="0 0 25 8" aria-hidden="true" focusable="false" shape-rendering="crispEdges">
+              <path d="M4 0h2v1h-2zM10 0h5v1h-5zM22 0h2v1h-2zM3 1h3v1h-3zM9 1h3v1h-3zM13 1h3v1h-3zM21 1h3v1h-3zM2 2h4v1h-4zM9 2h2v1h-2zM14 2h2v1h-2zM20 2h4v1h-4zM1 3h2v1h-2zM4 3h2v1h-2zM9 3h2v1h-2zM14 3h2v1h-2zM19 3h2v1h-2zM22 3h2v1h-2zM0 4h2v1h-2zM4 4h2v1h-2zM9 4h2v1h-2zM14 4h2v1h-2zM18 4h2v1h-2zM22 4h2v1h-2zM0 5h7v1h-7zM9 5h2v1h-2zM14 5h2v1h-2zM18 5h7v1h-7zM4 6h2v1h-2zM9 6h3v1h-3zM13 6h3v1h-3zM22 6h2v1h-2zM4 7h2v1h-2zM10 7h5v1h-5zM22 7h2v1h-2z"/>
+            </svg>
+          </h1>
+          <p class="message">Oops! Lost in space</p>
+          <a class="btn" href="/">Back to base</a>
+        </div>
+        <canvas id="game" aria-hidden="true"></canvas>
+      </div>
+    </div>
+
+    <div class="help">
+      <p class="hint no-touch">
+        <kbd aria-label="Left arrow">←</kbd> <kbd aria-label="Right arrow">→</kbd> or mouse to steer ·
+        <kbd>Space</kbd> or click to shoot · <kbd>P</kbd> pause
+      </p>
+      <p class="hint touch-only">Slide your finger to steer: the ship keeps firing while you touch the screen.</p>
+      <button type="button" class="sound" id="sound-toggle" aria-pressed="true">
+        <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+          <path d="M1.5 5.5h3l4-3v11l-4-3h-3z"/>
+          <path class="on" d="M10.8 5.4c.9.7 1.4 1.6 1.4 2.6s-.5 1.9-1.4 2.6M12.6 3.4c1.5 1.2 2.4 2.8 2.4 4.6s-.9 3.4-2.4 4.6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          <path class="off" d="M10.8 5.8l4 4.4m0-4.4l-4 4.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        Sound
+      </button>
+    </div>
+  </main>
+
+  <script>
+    (() => {
+      'use strict';
+
+      document.documentElement.classList.add('js');
+
+      const device = document.querySelector('.device');
+      const screenEl = document.getElementById('screen');
+      const canvas = document.getElementById('game');
+      const ctx = canvas.getContext('2d');
+      const soundBtn = document.getElementById('sound-toggle');
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const coarsePointer = window.matchMedia('(pointer: coarse)');
+
+      const C = {
+        alien: '#6fc6e8',
+        ship: '#f3f8fb',
+        bullet: '#ffffff',
+        text: '#eef3f6',
+        soft: '#aeb4ba',
+        dim: '#77747c',
+      };
+
+      // The world is always 300 units wide; its height follows the screen ratio.
+      const WW = 300;
+      const SHIP_PX = 2.5;
+      const SHIP_SPEED = 125;
+      const BULLET_SPEED = 235;
+      const FIRE_DELAY = 0.28;
+      const MAX_BULLETS = 3;
+      const COLS = 8, ROWS = 4, COL_GAP = 17, ROW_GAP = 13, CELL = 12;
+      const FORMATION_H = (ROWS - 1) * ROW_GAP + 8;
+      const HI_KEY = 'invaders404.hi';
+      const SOUND_KEY = 'invaders404.sound';
+      const POINTS = { squid: 30, crab: 20, octopus: 10 };
+
+      const rand = (a, b) => a + Math.random() * (b - a);
+      const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+      const pad = (n) => String(n).padStart(5, '0');
+      const overlap = (a, b, extra = 0) =>
+        a.x < b.x + b.w + extra && a.x + a.w + extra > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+
+      const store = {
+        get(key) { try { return localStorage.getItem(key); } catch { return null; } },
+        set(key, value) { try { localStorage.setItem(key, String(value)); } catch { /* storage unavailable */ } },
+      };
+
+      /* ---------- Pixel sprites ---------- */
+
+      function makeSprite(rows) {
+        const path = new Path2D();
+        rows.forEach((row, y) => {
+          for (let x = 0; x < row.length;) {
+            if (row[x] !== '#') { x++; continue; }
+            const start = x;
+            while (row[x] === '#') x++;
+            path.rect(start, y, x - start, 1);
+          }
+        });
+        return { path, w: rows[0].length, h: rows.length };
+      }
+
+      const S = {
+        squid: [
+          makeSprite(['...##...', '..####..', '.######.', '##.##.##', '########', '..#..#..', '.#.##.#.', '#.#..#.#']),
+          makeSprite(['...##...', '..####..', '.######.', '##.##.##', '########', '.#.##.#.', '#......#', '.#....#.']),
+        ],
+        crab: [
+          makeSprite(['..#.....#..', '...#...#...', '..#######..', '.##.###.##.', '###########', '#.#######.#', '#.#.....#.#', '...##.##...']),
+          makeSprite(['..#.....#..', '#..#...#..#', '#.#######.#', '###.###.###', '###########', '.#########.', '..#.....#..', '.#.......#.']),
+        ],
+        octopus: [
+          makeSprite(['....####....', '.##########.', '############', '###..##..###', '############', '...##..##...', '..##.##.##..', '##........##']),
+          makeSprite(['....####....', '.##########.', '############', '###..##..###', '############', '..###..###..', '.##..##..##.', '..##....##..']),
+        ],
+        ship: makeSprite([
+          '.....#.....',
+          '....###....',
+          '....#.#....',
+          '....###....',
+          '....###....',
+          '...#####...',
+          '..#######..',
+          '.#########.',
+          '###########',
+          '##..###..##',
+          '....#.#....',
+        ]),
+        ufo: makeSprite(['.....######.....', '...##########...', '..############..', '.##.##.##.##.##.', '################', '..###..##..###..', '...#........#...']),
+        zap: [
+          makeSprite(['.#.', '#..', '.#.', '..#', '.#.', '#..', '.#.']),
+          makeSprite(['.#.', '..#', '.#.', '#..', '.#.', '..#', '.#.']),
+        ],
+        blob: makeSprite(['.....#.....', '...#####...', '..##.#.##..', '.#########.', '..##.#.##..', '...#####...', '.....#.....']),
+      };
+
+      const SHIP_W = S.ship.w * SHIP_PX;
+      const SHIP_H = S.ship.h * SHIP_PX;
+
+      /* ---------- 3x5 pixel font ---------- */
+
+      const FONT = {
+        A: '.#. #.# ### #.# #.#', B: '##. #.# ##. #.# ##.', C: '.## #.. #.. #.. .##', D: '##. #.# #.# #.# ##.',
+        E: '### #.. ##. #.. ###', F: '### #.. ##. #.. #..', G: '.## #.. #.# #.# .##', H: '#.# #.# ### #.# #.#',
+        I: '### .#. .#. .#. ###', J: '..# ..# ..# #.# .#.', K: '#.# #.# ##. #.# #.#', L: '#.. #.. #.. #.. ###',
+        M: '#.# ### ### #.# #.#', N: '##. #.# #.# #.# #.#', O: '.#. #.# #.# #.# .#.', P: '##. #.# ##. #.. #..',
+        Q: '.#. #.# #.# ##. .##', R: '##. #.# ##. #.# #.#', S: '.## #.. .#. ..# ##.', T: '### .#. .#. .#. .#.',
+        U: '#.# #.# #.# #.# ###', V: '#.# #.# #.# #.# .#.', W: '#.# #.# ### ### #.#', X: '#.# #.# .#. #.# #.#',
+        Y: '#.# #.# .#. .#. .#.', Z: '### ..# .#. #.. ###',
+        0: '### #.# #.# #.# ###', 1: '.#. ##. .#. .#. ###', 2: '##. ..# .#. #.. ###', 3: '##. ..# .#. ..# ##.',
+        4: '#.# #.# ### ..# ..#', 5: '### #.. ##. ..# ##.', 6: '.## #.. ### #.# ###', 7: '### ..# .#. .#. .#.',
+        8: '### #.# ### #.# ###', 9: '### #.# ### ..# ##.',
+        '!': '.#. .#. .#. ... .#.', '?': '##. ..# .#. ... .#.', ':': '... .#. ... .#. ...', '-': '... ... ### ... ...',
+        '+': '... .#. ### .#. ...', '.': '... ... ... ... .#.', "'": '.#. .#. ... ... ...',
+      };
+      const GLYPHS = {};
+      for (const [ch, def] of Object.entries(FONT)) GLYPHS[ch] = makeSprite(def.split(' '));
+
+      /* ---------- Sound (Web Audio, generated on the fly) ---------- */
+
+      const Sound = {
+        ctx: null,
+        out: null,
+        noiseBuf: null,
+        enabled: store.get(SOUND_KEY) !== 'off',
+        init() {
+          if (!this.ctx) {
+            const AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) return;
+            this.ctx = new AC();
+            this.out = this.ctx.createGain();
+            this.out.gain.value = 0.6;
+            this.out.connect(this.ctx.destination);
+            const len = this.ctx.sampleRate;
+            this.noiseBuf = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
+            const data = this.noiseBuf.getChannelData(0);
+            for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+          }
+          if (this.ctx.state === 'suspended') this.ctx.resume();
+        },
+        ready() { return this.enabled && this.ctx; },
+        tone(f0, f1, dur, type = 'square', vol = 0.05, delay = 0) {
+          if (!this.ready()) return;
+          const t = this.ctx.currentTime + delay;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(f0, t);
+          if (f1 !== f0) osc.frequency.exponentialRampToValueAtTime(f1, t + dur);
+          gain.gain.setValueAtTime(vol, t);
+          gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+          osc.connect(gain);
+          gain.connect(this.out);
+          osc.start(t);
+          osc.stop(t + dur + 0.05);
+        },
+        noise(dur, vol, freq, type = 'bandpass') {
+          if (!this.ready()) return;
+          const t = this.ctx.currentTime;
+          const src = this.ctx.createBufferSource();
+          const filter = this.ctx.createBiquadFilter();
+          const gain = this.ctx.createGain();
+          src.buffer = this.noiseBuf;
+          filter.type = type;
+          filter.frequency.value = freq;
+          gain.gain.setValueAtTime(vol, t);
+          gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+          src.connect(filter);
+          filter.connect(gain);
+          gain.connect(this.out);
+          src.start(t);
+          src.stop(t + dur + 0.05);
+        },
+        shoot() { this.tone(1400, 260, 0.12, 'square', 0.03); },
+        hit() { this.noise(0.2, 0.3, 1600); this.tone(380, 60, 0.18, 'triangle', 0.08); },
+        bigHit() { this.noise(0.45, 0.35, 900); [880, 660, 990].forEach((f, i) => this.tone(f, f, 0.08, 'square', 0.03, i * 0.07)); },
+        tick() { this.noise(0.06, 0.15, 3000, 'highpass'); },
+        die() { this.noise(0.8, 0.45, 500, 'lowpass'); this.tone(320, 35, 0.8, 'sawtooth', 0.06); },
+        march(i) { const f = [98, 87.3, 77.8, 73.4][i % 4]; this.tone(f, f * 0.97, 0.1, 'square', 0.07); },
+        ufo(high) { this.tone(high ? 760 : 560, high ? 640 : 480, 0.12, 'sine', 0.025); },
+        start() { [523, 659, 784, 1047].forEach((f, i) => this.tone(f, f, 0.1, 'square', 0.035, i * 0.08)); },
+        over() { [392, 311, 247, 196].forEach((f, i) => this.tone(f, f * 0.97, 0.22, 'square', 0.045, i * 0.18)); },
+      };
+
+      function setSound(on) {
+        Sound.enabled = on;
+        store.set(SOUND_KEY, on ? 'on' : 'off');
+        soundBtn.setAttribute('aria-pressed', String(on));
+        if (on) Sound.init();
+      }
+
+      /* ---------- Game state ---------- */
+
+      let WH = 180, K = 1, groundY = 136, shipY = 145;
+
+      const game = {
+        mode: 'attract', // attract | playing | gameover
+        paused: false,
+        t: 0,
+        modeT: 0,
+        score: 0,
+        hi: parseInt(store.get(HI_KEY), 10) || 0,
+        newHi: false,
+        lives: 3,
+        wave: 1,
+        waveDelay: 0,
+        banner: null,
+        spawnT: 0,
+        wander: WW / 2,
+        wanderT: 0,
+      };
+      const ship = { x: (WW - SHIP_W) / 2, cooldown: 0, dead: false, deadT: 0, invuln: 0 };
+      const formation = { x: 0, y: 22, dir: 1, step: 6, travel: 0, frame: 0, note: 0, entering: 0 };
+      const input = { left: false, right: false, fire: false, pointerX: null, pointerFire: false };
+
+      let aliens = [], drifters = [], bullets = [], alienBullets = [], particles = [], blasts = [], floaters = [];
+      let ufo = null, ufoTimer = 15, alienFireTimer = 1.5;
+
+      const computeStep = () => clamp((groundY - formation.y - FORMATION_H) / 12, 4, 14);
+
+      /* ---------- Dimensions ---------- */
+
+      function resize() {
+        const cw = canvas.clientWidth, ch = canvas.clientHeight;
+        if (!cw || !ch) return;
+        const dpr = Math.min(window.devicePixelRatio || 1, 3);
+        canvas.width = Math.round(cw * dpr);
+        canvas.height = Math.round(ch * dpr);
+        K = canvas.width / WW;
+
+        const newWH = WW * ch / cw;
+        const ratio = newWH / WH;
+        WH = newWH;
+        shipY = WH - 4 - SHIP_H;
+        groundY = shipY - 9;
+
+        if (Math.abs(ratio - 1) > 1e-3) {
+          for (const list of [bullets, alienBullets, drifters, particles, blasts, floaters]) {
+            for (const o of list) o.y *= ratio;
+          }
+          formation.y *= ratio;
+          formation.step = computeStep();
+          positionAliens();
+        }
+      }
+
+      /* ---------- Effects ---------- */
+
+      function burst(x, y, color, count = 10, speed = 40) {
+        for (let i = 0; i < count; i++) {
+          const a = Math.random() * Math.PI * 2;
+          const v = rand(speed * 0.3, speed);
+          const life = rand(0.35, 0.8);
+          particles.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life, max: life, size: rand(0.8, 1.8), color });
+        }
+      }
+
+      function blast(x, y, color, scale = 1) {
+        blasts.push({ x, y, t: 0, dur: 0.32, color, scale });
+      }
+
+      function shake() {
+        if (reduceMotion.matches) return;
+        device.classList.remove('shake');
+        void device.offsetWidth;
+        device.classList.add('shake');
+      }
+
+      /* ---------- Modes ---------- */
+
+      function setMode(mode) {
+        game.mode = mode;
+        game.modeT = 0;
+        screenEl.dataset.mode = mode;
+      }
+
+      function spawnDrifter(x) {
+        const type = ['squid', 'crab', 'crab', 'octopus'][Math.floor(Math.random() * 4)];
+        const w = S[type][0].w;
+        const a = x === undefined ? rand(4, 16) : 0;
+        const bx = x === undefined ? rand(8 + a, WW - 8 - a - w) : x - w / 2;
+        drifters.push({ type, w, h: 8, bx, x: bx, y: -10, vy: rand(9, 15), a, f: rand(0.6, 1.4), p: rand(0, Math.PI * 2), t: 0, frame: 0, ft: 0, alive: true });
+        return drifters[drifters.length - 1];
+      }
+
+      function toAttract() {
+        setMode('attract');
+        game.paused = false;
+        game.banner = null;
+        game.spawnT = 1.2;
+        aliens = [];
+        bullets = [];
+        alienBullets = [];
+        drifters = [];
+        ufo = null;
+        ship.dead = false;
+        ship.x = (WW - SHIP_W) / 2;
+        // As in the mockup: a single invader at the top, centered.
+        spawnDrifter(WW / 2).y = 4;
+      }
+
+      function startGame() {
+        Sound.init();
+        for (const d of drifters) {
+          blast(d.x + d.w / 2, d.y + d.h / 2, C.alien);
+          burst(d.x + d.w / 2, d.y + d.h / 2, C.alien, 6, 35);
+        }
+        drifters = [];
+        bullets = [];
+        alienBullets = [];
+        ufo = null;
+        setMode('playing');
+        Object.assign(game, { paused: false, score: 0, lives: 3, wave: 1, waveDelay: 0, newHi: false });
+        game.banner = { text: 'WAVE 1', t: 0, dur: 2.2 };
+        Object.assign(ship, { x: (WW - SHIP_W) / 2, dead: false, deadT: 0, invuln: 0, cooldown: 0.15 });
+        formation.note = 0;
+        formation.frame = 0;
+        buildWave();
+        Sound.start();
+      }
+
+      function gameOver() {
+        setMode('gameover');
+        store.set(HI_KEY, game.hi);
+        input.pointerFire = false;
+        Sound.over();
+      }
+
+      function setPaused(paused) {
+        game.paused = paused && game.mode === 'playing';
+      }
+
+      const canStart = () => game.mode === 'attract' || (game.mode === 'gameover' && game.modeT > 1);
+
+      /* ---------- Invader waves ---------- */
+
+      function buildWave() {
+        aliens = [];
+        for (let r = 0; r < ROWS; r++) {
+          const type = r === 0 ? 'squid' : r < 3 ? 'crab' : 'octopus';
+          const w = S[type][0].w;
+          for (let c = 0; c < COLS; c++) {
+            aliens.push({ type, col: c, alive: true, ox: c * COL_GAP + (CELL - w) / 2, oy: r * ROW_GAP, x: 0, y: 0, w, h: 8 });
+          }
+        }
+        formation.x = (WW - ((COLS - 1) * COL_GAP + CELL)) / 2;
+        formation.y = 22 + Math.min(game.wave - 1, 5) * 4;
+        formation.dir = 1;
+        formation.travel = 0;
+        formation.entering = 1;
+        formation.step = computeStep();
+        alienFireTimer = 1.6;
+        ufoTimer = rand(12, 20);
+        positionAliens();
+      }
+
+      function positionAliens() {
+        const e = formation.entering;
+        const offset = e > 0 ? e * e * (formation.y + FORMATION_H + 10) : 0;
+        for (const a of aliens) {
+          a.x = formation.x + a.ox;
+          a.y = formation.y + a.oy - offset;
+        }
+      }
+
+      function beat() {
+        formation.frame ^= 1;
+        Sound.march(formation.note++);
+      }
+
+      function updateFormation(dt) {
+        if (formation.entering > 0) {
+          formation.entering = Math.max(0, formation.entering - dt / 0.9);
+          positionAliens();
+          return;
+        }
+
+        let alive = 0, minX = Infinity, maxX = -Infinity;
+        for (const a of aliens) {
+          if (!a.alive) continue;
+          alive++;
+          minX = Math.min(minX, a.x);
+          maxX = Math.max(maxX, a.x + a.w);
+        }
+        if (!alive) { waveCleared(); return; }
+
+        // The fewer invaders remain, the faster they move (like the original).
+        const killed = 1 - alive / aliens.length;
+        let speed = 13 * (1 + 0.15 * (game.wave - 1)) * (1 + 0.9 * killed + 2.6 * killed * killed);
+        if (alive === 1) speed *= 1.5;
+        speed = Math.min(speed, 120);
+
+        const dx = formation.dir * speed * dt;
+        if ((formation.dir < 0 && minX + dx < 4) || (formation.dir > 0 && maxX + dx > WW - 4)) {
+          formation.dir *= -1;
+          formation.y += formation.step;
+          beat();
+        } else {
+          formation.x += dx;
+          formation.travel += Math.abs(dx);
+          if (formation.travel >= 6) { formation.travel -= 6; beat(); }
+        }
+        positionAliens();
+
+        for (const a of aliens) {
+          if (a.alive && a.y + a.h >= groundY) { invasion(); break; }
+        }
+      }
+
+      function updateAlienFire(dt) {
+        alienFireTimer -= dt;
+        if (alienFireTimer > 0) return;
+        alienFireTimer = rand(0.45, 1.3) / (1 + 0.18 * (game.wave - 1));
+        if (alienBullets.length >= 2 + game.wave) return;
+
+        const bottoms = new Map();
+        for (const a of aliens) {
+          if (!a.alive) continue;
+          const b = bottoms.get(a.col);
+          if (!b || a.y > b.y) bottoms.set(a.col, a);
+        }
+        const shooters = [...bottoms.values()];
+        if (!shooters.length) return;
+
+        const cx = ship.x + SHIP_W / 2;
+        const dist = (a) => Math.abs(a.x + a.w / 2 - cx);
+        const shooter = Math.random() < 0.5
+          ? shooters.reduce((best, a) => (dist(a) < dist(best) ? a : best))
+          : shooters[Math.floor(Math.random() * shooters.length)];
+        alienBullets.push({ x: shooter.x + shooter.w / 2 - 1.5, y: shooter.y + shooter.h, w: 3, h: 7, vy: 62 + 6 * game.wave, ft: 0, frame: 0 });
+      }
+
+      function updateUfo(dt) {
+        if (!ufo) {
+          ufoTimer -= dt;
+          if (ufoTimer <= 0) {
+            const dir = Math.random() < 0.5 ? 1 : -1;
+            ufo = { x: dir > 0 ? -S.ufo.w : WW, y: 11, w: S.ufo.w, h: S.ufo.h, dir, snd: 0, high: false };
+            ufoTimer = rand(16, 26);
+          }
+          return;
+        }
+        ufo.x += ufo.dir * 42 * dt;
+        ufo.snd -= dt;
+        if (ufo.snd <= 0) {
+          ufo.snd = 0.13;
+          ufo.high = !ufo.high;
+          Sound.ufo(ufo.high);
+        }
+        if (ufo.x > WW + 2 || ufo.x < -ufo.w - 2) ufo = null;
+      }
+
+      function waveCleared() {
+        game.wave++;
+        aliens = [];
+        ufo = null;
+        for (const z of alienBullets) z.dead = true;
+        game.waveDelay = 1.2;
+        game.banner = { text: 'WAVE ' + game.wave, t: 0, dur: 2.2 };
+        Sound.start();
+      }
+
+      function invasion() {
+        if (!ship.dead) killShip();
+        game.lives = 0;
+        game.banner = { text: 'INVASION !', t: 0, dur: 1.5 };
+      }
+
+      /* ---------- Player ---------- */
+
+      function tryFire(silent = false) {
+        const max = game.mode === 'attract' ? 2 : MAX_BULLETS;
+        if (ship.dead || ship.cooldown > 0 || bullets.length >= max) return;
+        bullets.push({ x: ship.x + SHIP_W / 2 - 0.5, y: shipY - 5, w: 1, h: 5 });
+        ship.cooldown = FIRE_DELAY;
+        if (!silent) Sound.shoot();
+      }
+
+      function steerShip(dt) {
+        let dir = (input.right ? 1 : 0) - (input.left ? 1 : 0);
+        if (dir) {
+          input.pointerX = null;
+        } else if (input.pointerX !== null) {
+          const d = input.pointerX - (ship.x + SHIP_W / 2);
+          dir = Math.abs(d) < 0.6 ? 0 : clamp(d / 8, -1, 1);
+        }
+        ship.x = clamp(ship.x + dir * SHIP_SPEED * dt, 3, WW - 3 - SHIP_W);
+      }
+
+      function shipHit(rect) {
+        // Two boxes: fuselage and wings, to match the silhouette.
+        const body = { x: ship.x + 4 * SHIP_PX, y: shipY, w: 3 * SHIP_PX, h: SHIP_H };
+        const wings = { x: ship.x + 0.5 * SHIP_PX, y: shipY + 6 * SHIP_PX, w: 10 * SHIP_PX, h: 4 * SHIP_PX };
+        return overlap(rect, body) || overlap(rect, wings);
+      }
+
+      function killShip() {
+        ship.dead = true;
+        ship.deadT = 1.5;
+        game.lives = Math.max(0, game.lives - 1);
+        const cx = ship.x + SHIP_W / 2, cy = shipY + SHIP_H / 2;
+        burst(cx, cy, C.ship, 26, 70);
+        blast(cx, cy, C.ship, 2);
+        for (const z of alienBullets) z.dead = true;
+        Sound.die();
+        shake();
+      }
+
+      function addScore(n) {
+        game.score += n;
+        if (game.score > game.hi) {
+          game.hi = game.score;
+          game.newHi = true;
+        }
+      }
+
+      function killAlien(a) {
+        a.alive = false;
+        addScore(POINTS[a.type]);
+        const cx = a.x + a.w / 2, cy = a.y + a.h / 2;
+        blast(cx, cy, C.alien);
+        burst(cx, cy, C.alien, 8, 45);
+        Sound.hit();
+      }
+
+      function hitUfo() {
+        const pts = [50, 100, 150, 300][Math.floor(Math.random() * 4)];
+        addScore(pts);
+        const cx = ufo.x + ufo.w / 2, cy = ufo.y + ufo.h / 2;
+        blast(cx, cy, C.ship, 1.4);
+        burst(cx, cy, C.ship, 14, 50);
+        floaters.push({ text: '+' + pts, x: cx, y: ufo.y, t: 0, color: C.alien });
+        Sound.bigHit();
+        ufo = null;
+      }
+
+      /* ---------- Projectiles ---------- */
+
+      function updateBullets(dt) {
+        const attract = game.mode === 'attract';
+        const targets = attract ? drifters : aliens;
+        for (const b of bullets) {
+          const prevY = b.y;
+          b.y -= BULLET_SPEED * dt;
+          if (b.y + b.h < 0) { b.dead = true; continue; }
+
+          // Area swept during the frame, so bullets cannot tunnel through targets at low FPS.
+          const sweep = { x: b.x, y: b.y, w: b.w, h: b.h + (prevY - b.y) };
+
+          for (const z of alienBullets) {
+            if (z.dead || !overlap(sweep, z, 1)) continue;
+            b.dead = z.dead = true;
+            burst(z.x + 1.5, z.y + 3.5, C.bullet, 5, 25);
+            Sound.tick();
+            break;
+          }
+          if (b.dead) continue;
+
+          if (ufo && overlap(sweep, ufo)) { b.dead = true; hitUfo(); continue; }
+
+          for (const a of targets) {
+            if (!a.alive || !overlap(sweep, a)) continue;
+            b.dead = true;
+            if (attract) {
+              a.alive = false;
+              blast(a.x + a.w / 2, a.y + a.h / 2, C.alien);
+              burst(a.x + a.w / 2, a.y + a.h / 2, C.alien, 8, 45);
+            } else {
+              killAlien(a);
+            }
+            break;
+          }
+        }
+        bullets = bullets.filter((b) => !b.dead);
+      }
+
+      function updateAlienBullets(dt) {
+        for (const z of alienBullets) {
+          if (z.dead) continue;
+          const prevY = z.y;
+          z.y += z.vy * dt;
+          z.ft += dt;
+          if (z.ft > 0.08) { z.ft = 0; z.frame ^= 1; }
+          if (z.y > WH) { z.dead = true; continue; }
+          if (!ship.dead && ship.invuln <= 0 && shipHit({ x: z.x, y: prevY, w: z.w, h: z.h + z.y - prevY })) {
+            z.dead = true;
+            killShip();
+          }
+        }
+        alienBullets = alienBullets.filter((z) => !z.dead);
+      }
+
+      /* ---------- Update ---------- */
+
+      function updateAttract(dt) {
+        if (reduceMotion.matches) return;
+
+        game.spawnT -= dt;
+        if (game.spawnT <= 0) {
+          game.spawnT = rand(0.7, 1.7);
+          if (drifters.length < 7) spawnDrifter();
+        }
+
+        for (const d of drifters) {
+          d.t += dt;
+          d.y += d.vy * dt;
+          d.x = d.bx + Math.sin(d.t * d.f + d.p) * d.a;
+          d.ft += dt;
+          if (d.ft > 0.4) { d.ft = 0; d.frame ^= 1; }
+          if (d.alive && d.y + d.h >= groundY) {
+            d.alive = false;
+            blast(d.x + d.w / 2, d.y + d.h / 2, C.alien);
+          }
+        }
+
+        // Autopilot: aims at the lowest invader, leading its trajectory.
+        let target = null;
+        for (const d of drifters) {
+          if (d.alive && d.y > -2 && (!target || d.y > target.y)) target = d;
+        }
+        let goal;
+        if (target) {
+          const tt = Math.max(0, (shipY - 5 - target.y - target.h) / (BULLET_SPEED + target.vy));
+          goal = target.bx + Math.sin((target.t + tt) * target.f + target.p) * target.a + target.w / 2;
+        } else {
+          game.wanderT -= dt;
+          if (game.wanderT <= 0) {
+            game.wanderT = rand(1, 2.5);
+            game.wander = rand(30, WW - 30);
+          }
+          goal = game.wander;
+        }
+        const diff = goal - (ship.x + SHIP_W / 2);
+        ship.x = clamp(ship.x + clamp(diff / 6, -1, 1) * 85 * dt, 3, WW - 3 - SHIP_W);
+        if (target && Math.abs(diff) < 2.5) tryFire(true);
+
+        updateBullets(dt);
+        drifters = drifters.filter((d) => d.alive);
+      }
+
+      function updatePlaying(dt) {
+        if (ship.dead) {
+          ship.deadT -= dt;
+          if (ship.deadT <= 0) {
+            if (game.lives <= 0) { gameOver(); return; }
+            Object.assign(ship, { dead: false, invuln: 2, x: (WW - SHIP_W) / 2 });
+          }
+        } else {
+          steerShip(dt);
+          if (input.fire || input.pointerFire) tryFire();
+          if (ship.invuln > 0) ship.invuln -= dt;
+        }
+
+        if (game.waveDelay > 0) {
+          game.waveDelay -= dt;
+          if (game.waveDelay <= 0) buildWave();
+        } else if (!ship.dead && aliens.length) {
+          updateFormation(dt);
+          if (!ship.dead) {
+            updateAlienFire(dt);
+            updateUfo(dt);
+          }
+        }
+
+        updateBullets(dt);
+        updateAlienBullets(dt);
+      }
+
+      function updateEffects(dt) {
+        const drag = Math.max(0, 1 - 2.5 * dt);
+        for (const p of particles) {
+          p.x += p.vx * dt;
+          p.y += p.vy * dt;
+          p.vx *= drag;
+          p.vy *= drag;
+          p.life -= dt;
+        }
+        particles = particles.filter((p) => p.life > 0);
+
+        for (const b of blasts) b.t += dt;
+        blasts = blasts.filter((b) => b.t < b.dur);
+
+        for (const f of floaters) { f.t += dt; f.y -= 12 * dt; }
+        floaters = floaters.filter((f) => f.t < 1.1);
+      }
+
+      function update(dt) {
+        game.t += dt;
+        game.modeT += dt;
+        ship.cooldown = Math.max(0, ship.cooldown - dt);
+        if (game.banner) {
+          game.banner.t += dt;
+          if (game.banner.t > game.banner.dur) game.banner = null;
+        }
+
+        if (game.mode === 'attract') {
+          updateAttract(dt);
+        } else if (game.mode === 'playing') {
+          updatePlaying(dt);
+        } else {
+          updateBullets(dt);
+          updateAlienBullets(dt);
+          if (game.modeT > 30) toAttract();
+        }
+        updateEffects(dt);
+      }
+
+      /* ---------- Rendering ---------- */
+
+      const snap = (v) => Math.round(v * K) / K;
+
+      function drawSprite(spr, x, y, px = 1, color = '#fff', alpha = 1) {
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = color;
+        ctx.translate(snap(x), snap(y));
+        ctx.scale(px, px);
+        ctx.fill(spr.path);
+        ctx.restore();
+      }
+
+      function drawText(str, x, y, size, color, align = 'left', alpha = 1) {
+        const text = str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+        const width = text.length * 4 * size - size;
+        let cx = align === 'center' ? x - width / 2 : align === 'right' ? x - width : x;
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = color;
+        for (const ch of text) {
+          const g = GLYPHS[ch];
+          if (g) {
+            ctx.save();
+            ctx.translate(snap(cx), snap(y));
+            ctx.scale(size, size);
+            ctx.fill(g.path);
+            ctx.restore();
+          }
+          cx += 4 * size;
+        }
+        ctx.restore();
+      }
+
+      function drawGround() {
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+        const thickness = Math.max(1, Math.round(K * 0.8)) / K;
+        const y = snap(groundY);
+        for (let x = 1.5; x < WW - 1; x += 5) ctx.fillRect(snap(x), y, 3, thickness);
+      }
+
+      function drawHud(t) {
+        if (game.mode === 'attract') {
+          if (game.hi > 0) drawText('HI ' + pad(game.hi), WW / 2, 4, 1.1, C.dim, 'center');
+          return;
+        }
+        drawText('SCORE ' + pad(game.score), 5, 4, 1.1, C.text);
+        const blinkHi = game.newHi && Math.floor(t * 3) % 2 === 0;
+        drawText('HI ' + pad(game.hi), WW / 2, 4, 1.1, game.newHi ? C.alien : C.dim, 'center', blinkHi ? 0.45 : 1);
+        const miniPx = 0.65, miniW = S.ship.w * miniPx;
+        for (let i = 0; i < game.lives; i++) drawSprite(S.ship, WW - 5 - miniW - i * (miniW + 2), 2.5, miniPx, C.ship);
+      }
+
+      function drawMessages(t) {
+        const blinkOn = reduceMotion.matches || t % 1.1 < 0.75;
+        const touch = coarsePointer.matches;
+
+        if (game.banner) {
+          const b = game.banner;
+          drawText(b.text, WW / 2, groundY - 16, 1.6, C.text, 'center', clamp((b.dur - b.t) / 0.3, 0, 1));
+        }
+
+        if (game.mode === 'attract' && blinkOn) {
+          drawText(touch ? 'TAP THE SCREEN TO PLAY' : 'SPACE OR CLICK TO PLAY', WW / 2, groundY - 14, 1.1, C.text, 'center');
+        } else if (game.mode === 'gameover') {
+          // The ship is gone: use its area below the dotted line.
+          drawText('GAME OVER', WW / 2, groundY + 9, 2, C.text, 'center');
+          if (game.modeT > 1 && blinkOn) {
+            drawText(touch ? 'TAP TO PLAY AGAIN' : 'SPACE TO PLAY AGAIN', WW / 2, groundY + 25, 1, C.soft, 'center');
+          }
+        }
+      }
+
+      function render() {
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.setTransform(K, 0, 0, K, 0, 0);
+
+        const t = game.t;
+        drawGround();
+
+        if (game.mode === 'attract') {
+          for (const d of drifters) drawSprite(S[d.type][d.frame], d.x, d.y, 1, C.alien);
+        } else {
+          for (const a of aliens) if (a.alive) drawSprite(S[a.type][formation.frame], a.x, a.y, 1, C.alien);
+        }
+        if (ufo) drawSprite(S.ufo, ufo.x, ufo.y, 1, C.ship);
+
+        ctx.fillStyle = C.bullet;
+        for (const b of bullets) ctx.fillRect(snap(b.x), snap(b.y), b.w, b.h);
+        for (const z of alienBullets) drawSprite(S.zap[z.frame], z.x, z.y, 1, C.alien);
+
+        const blinking = ship.invuln > 0 && Math.floor(t * 12) % 2 === 1;
+        if (!ship.dead && !blinking && game.mode !== 'gameover') drawSprite(S.ship, ship.x, shipY, SHIP_PX, C.ship);
+
+        for (const b of blasts) {
+          const p = b.t / b.dur;
+          const s = b.scale * (0.6 + 0.8 * p);
+          drawSprite(S.blob, b.x - (S.blob.w * s) / 2, b.y - (S.blob.h * s) / 2, s, b.color, 1 - p);
+        }
+        for (const p of particles) {
+          ctx.globalAlpha = clamp(p.life / p.max, 0, 1);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
+        }
+        ctx.globalAlpha = 1;
+        for (const f of floaters) drawText(f.text, f.x, f.y, 1, f.color, 'center', 1 - f.t / 1.1);
+
+        drawHud(t);
+        drawMessages(t);
+
+        if (game.paused) {
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+          ctx.fillRect(0, 0, WW, WH);
+          // Between the HTML button and the dotted line, to avoid overlapping the message.
+          drawText('PAUSE', WW / 2, groundY - 24, 2, C.text, 'center');
+          drawText(coarsePointer.matches ? 'TAP TO RESUME' : 'P TO RESUME', WW / 2, groundY - 10, 1, C.soft, 'center');
+        }
+      }
+
+      /* ---------- Controls ---------- */
+
+      const LEFT = new Set(['ArrowLeft', 'KeyA']);
+      const RIGHT = new Set(['ArrowRight', 'KeyD']);
+      const FIRE = new Set(['Space', 'ArrowUp', 'KeyW']);
+
+      window.addEventListener('keydown', (e) => {
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
+        const control = e.target instanceof Element ? e.target.closest('a, button') : null;
+        const code = e.code;
+        const key = (e.key || '').toLowerCase();
+
+        if (LEFT.has(code) || RIGHT.has(code) || FIRE.has(code)) {
+          if (code === 'Space' && control && control.tagName === 'BUTTON') return;
+          e.preventDefault();
+          if (LEFT.has(code)) input.left = true;
+          if (RIGHT.has(code)) input.right = true;
+          if (FIRE.has(code)) input.fire = true;
+          if (e.repeat) return;
+          if (canStart()) startGame();
+          else if (game.paused) setPaused(false);
+          else if (game.mode === 'playing' && FIRE.has(code)) tryFire();
+          return;
+        }
+
+        if (e.repeat) return;
+        if (code === 'Enter' && !control && canStart()) {
+          e.preventDefault();
+          startGame();
+        } else if ((key === 'p' || code === 'Escape') && game.mode === 'playing') {
+          e.preventDefault();
+          setPaused(!game.paused);
+        } else if (key === 'm') {
+          setSound(!Sound.enabled);
+        }
+      });
+
+      window.addEventListener('keyup', (e) => {
+        if (LEFT.has(e.code)) input.left = false;
+        if (RIGHT.has(e.code)) input.right = false;
+        if (FIRE.has(e.code)) input.fire = false;
+      });
+
+      const worldX = (e) => {
+        const r = canvas.getBoundingClientRect();
+        return ((e.clientX - r.left) / r.width) * WW;
+      };
+
+      screenEl.addEventListener('pointerdown', (e) => {
+        if (e.target.closest('a') || (e.pointerType === 'mouse' && e.button !== 0)) return;
+        e.preventDefault();
+        if (canStart()) {
+          startGame();
+        } else if (game.paused) {
+          setPaused(false);
+          return;
+        }
+        if (game.mode !== 'playing') return;
+        input.pointerX = worldX(e);
+        input.pointerFire = true;
+        tryFire();
+        try { screenEl.setPointerCapture(e.pointerId); } catch { /* capture not supported */ }
+      });
+
+      screenEl.addEventListener('pointermove', (e) => {
+        if (game.mode !== 'playing' || game.paused) return;
+        if (e.pointerType === 'mouse' || input.pointerFire) input.pointerX = worldX(e);
+      });
+
+      const releasePointer = (e) => {
+        input.pointerFire = false;
+        if (e.pointerType !== 'mouse') input.pointerX = null;
+      };
+      screenEl.addEventListener('pointerup', releasePointer);
+      screenEl.addEventListener('pointercancel', releasePointer);
+      screenEl.addEventListener('pointerleave', (e) => {
+        if (e.pointerType === 'mouse') input.pointerX = null;
+      });
+
+      soundBtn.addEventListener('click', (e) => {
+        setSound(!Sound.enabled);
+        // After a mouse click, release focus so Space is used to shoot.
+        if (e.detail > 0) soundBtn.blur();
+      });
+
+      function autoPause() {
+        input.left = input.right = input.fire = input.pointerFire = false;
+        setPaused(true);
+      }
+      window.addEventListener('blur', autoPause);
+      document.addEventListener('visibilitychange', () => { if (document.hidden) autoPause(); });
+      window.addEventListener('pagehide', () => store.set(HI_KEY, game.hi));
+
+      /* ---------- Startup ---------- */
+
+      soundBtn.setAttribute('aria-pressed', String(Sound.enabled));
+      resize();
+      if ('ResizeObserver' in window) new ResizeObserver(resize).observe(canvas);
+      else window.addEventListener('resize', resize);
+      toAttract();
+
+      let last = performance.now();
+      function frame(now) {
+        const dt = Math.min(0.05, Math.max(0, (now - last) / 1000));
+        last = now;
+        if (!game.paused) update(dt);
+        render();
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    })();
+  </script>
+</body>
+</html>

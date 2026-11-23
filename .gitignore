@@ -1,0 +1,47 @@
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Editors & IDEs
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+
+# Node (if tooling is used for previews/linting)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm/
+
+# Logs & temp files
+logs/
+*.log
+tmp/
+temp/
+*.tmp
+*.bak
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Build / preview output
+dist/
+build/
+.cache/
